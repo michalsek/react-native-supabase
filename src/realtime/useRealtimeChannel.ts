@@ -1,8 +1,8 @@
-import { useEffect, useEffectEvent, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { AppState, type AppStateStatus } from 'react-native';
 
 import { useSupabaseClient } from '../client';
-import { Logger } from '../utils';
+import { Logger, useEffectEvent } from '../utils';
 
 import type {
   DefaultSchemaName,
@@ -64,7 +64,7 @@ export default function useRealtimeChannel<
     return () => {
       unsubscribeFromChannel();
     };
-  }, []);
+  }, [channel]);
 
   useEffect(() => {
     appStateRef.current = AppState.currentState as AppStateStatus;

@@ -15,12 +15,12 @@ export enum LogCategory {
 }
 
 const categoryColors: Record<string, string> = {
-  [LogCategory.Auth]: '#4F46E5',
-  [LogCategory.Database]: '#059669',
-  [LogCategory.Realtime]: '#D97706',
-  [LogCategory.Functions]: '#B91C1C',
-  [LogCategory.Storage]: '#047857',
-  [LogCategory.Other]: '#6B7280',
+  [LogCategory.Auth]: '\x1b[32m',
+  [LogCategory.Database]: '\x1b[33m',
+  [LogCategory.Realtime]: '\x1b[34m',
+  [LogCategory.Functions]: '\x1b[35m',
+  [LogCategory.Storage]: '\x1b[36m',
+  [LogCategory.Other]: '\x1b[37m',
   Reset: '\x1b[0m',
 };
 

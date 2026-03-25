@@ -85,7 +85,7 @@
     "typescript": "^5.9.2"
   },
   "peerDependencies": {
-    "@supabase/supabase-js": "*",
+    "@supabase/supabase-js": "^2.0.0",
     "react": "*",
     "react-native": "*"
   },

@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { useMemo } from 'react';
+import { type Context, useMemo } from 'react';
 
 import SupabaseContext, { type SupabaseContextType } from './context';
 
@@ -21,24 +21,28 @@ function SupabaseProvider<
 >(
   props: SupabaseProviderProps<Database, SchemaNameOrClientOptions, SchemaName>
 ) {
-  const Context = SupabaseContext as React.Context<SupabaseContextType<
+  const Context = SupabaseContext as Context<SupabaseContextType<
     Database,
     SchemaNameOrClientOptions,
     SchemaName
   > | null>;
 
-  const { children, ...clientProps } = props;
+  const {
+    children,
+    client: externalClient,
+    supabaseUrl,
+    supabaseKey,
+    options,
+  } = props;
 
   const contextValue: SupabaseContextType<
     Database,
     SchemaNameOrClientOptions,
     SchemaName
   > = useMemo(() => {
-    if ('client' in clientProps) {
-      return { client: clientProps.client! };
+    if (externalClient != null) {
+      return { client: externalClient };
     }
-
-    const { supabaseUrl, supabaseKey, options } = clientProps;
 
     const client = createClient<
       Database,
@@ -47,7 +51,7 @@ function SupabaseProvider<
     >(supabaseUrl, supabaseKey, options);
 
     return { client };
-  }, [clientProps]);
+  }, [externalClient, supabaseUrl, supabaseKey, options]);
 
   return <Context.Provider value={contextValue}>{children}</Context.Provider>;
 }
