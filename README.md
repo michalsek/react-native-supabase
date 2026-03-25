@@ -44,7 +44,7 @@ export default function App() {
   return (
     <SupabaseProvider client={supabase}>
       <MainApp />
-    </SupabaseProvider>
+    </SupabaaseProvider>
   );
 }
 ```
