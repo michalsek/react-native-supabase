@@ -4,23 +4,13 @@ Utility hooks for supabase usage in react-native
 
 ## Installation
 
-
 ```sh
 npm install react-native-supabase
 ```
 
-
 ## Usage
 
-
-```js
-import { multiply } from 'react-native-supabase';
-
-// ...
-
-const result = await multiply(3, 7);
-```
-
+TODO
 
 ## Contributing
 
@@ -31,7 +21,3 @@ const result = await multiply(3, 7);
 ## License
 
 MIT
-
----
-
-Made with [create-react-native-library](https://github.com/callstack/react-native-builder-bob)

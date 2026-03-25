@@ -1,13 +1,17 @@
-import { Text, View, StyleSheet } from 'react-native';
-import { multiply } from 'react-native-supabase';
+import { StyleSheet, Text, View } from 'react-native';
 
-const result = multiply(3, 7);
+import { SupabaseProvider } from 'react-native-supabase';
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Result: {result}</Text>
-    </View>
+    <SupabaseProvider
+      supabaseKey="12332131"
+      supabaseUrl="https://your-project.supabase.co"
+    >
+      <View style={styles.container}>
+        <Text>HE!</Text>
+      </View>
+    </SupabaseProvider>
   );
 }
 
