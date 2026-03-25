@@ -21,23 +21,35 @@ function SupabaseProvider<
 >(
   props: SupabaseProviderProps<Database, SchemaNameOrClientOptions, SchemaName>
 ) {
+  const Context = SupabaseContext as React.Context<SupabaseContextType<
+    Database,
+    SchemaNameOrClientOptions,
+    SchemaName
+  > | null>;
+
   const { children, ...clientProps } = props;
 
-  const contextValue: SupabaseContextType = useMemo(() => {
+  const contextValue: SupabaseContextType<
+    Database,
+    SchemaNameOrClientOptions,
+    SchemaName
+  > = useMemo(() => {
     if ('client' in clientProps) {
-      return { client: clientProps.client };
+      return { client: clientProps.client! };
     }
 
     const { supabaseUrl, supabaseKey, options } = clientProps;
-    const client = createClient(supabaseUrl, supabaseKey, options);
+
+    const client = createClient<
+      Database,
+      SchemaNameOrClientOptions,
+      SchemaName
+    >(supabaseUrl, supabaseKey, options);
+
     return { client };
   }, [clientProps]);
 
-  return (
-    <SupabaseContext.Provider value={contextValue}>
-      {children}
-    </SupabaseContext.Provider>
-  );
+  return <Context.Provider value={contextValue}>{children}</Context.Provider>;
 }
 
 export default SupabaseProvider;
