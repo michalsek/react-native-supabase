@@ -60,15 +60,15 @@ const styles = StyleSheet.create({
     maxWidth: '75%',
     paddingVertical: 8,
     paddingHorizontal: 14,
-    borderRadius: 18,
+    borderRadius: 8,
   },
   ownBubble: {
-    backgroundColor: '#007AFF',
-    borderBottomRightRadius: 4,
+    backgroundColor: '#343434',
+    borderBottomRightRadius: 2,
   },
   otherBubble: {
-    backgroundColor: '#E9E9EB',
-    borderBottomLeftRadius: 4,
+    backgroundColor: '#F7F7F7',
+    borderBottomLeftRadius: 2,
   },
   message: {
     fontSize: 16,

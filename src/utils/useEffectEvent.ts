@@ -5,7 +5,10 @@ function createUseEffectEvent() {
     return React.useEffectEvent;
   }
 
-  return function useEffectEvent<P, T extends (...args: P[]) => any>(fn: T): T {
+  return function useEffectEvent<
+    T extends (...args: any[]) => any,
+    P extends any[] = Parameters<T>
+  >(fn: T): T {
     const ref = React.useRef<T>(fn);
     ref.current = fn;
 

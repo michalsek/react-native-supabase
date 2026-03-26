@@ -1,8 +1,9 @@
+import { type REALTIME_SUBSCRIBE_STATES } from '@supabase/supabase-js';
 import { useEffect, useMemo, useRef } from 'react';
 import { AppState, type AppStateStatus } from 'react-native';
 
 import { useSupabaseClient } from '../client';
-import { Logger, useEffectEvent } from '../utils';
+import { Logger } from '../utils';
 
 import type {
   DefaultSchemaName,
@@ -12,8 +13,14 @@ import type {
 } from '../types';
 import { LogCategory } from '../utils/Logger';
 
+type OnSubscribeCallback = (
+  status: REALTIME_SUBSCRIBE_STATES,
+  error: Error | undefined
+) => void;
+
 interface UseRealtimeChannelOptions {
   channelName: string;
+  onSubscribe?: OnSubscribeCallback;
 }
 
 const Log = Logger.extend(LogCategory.Realtime);
@@ -26,7 +33,7 @@ export default function useRealtimeChannel<
     SchemaNameOrClientOptions
   >
 >(options: UseRealtimeChannelOptions) {
-  const { channelName } = options;
+  const { channelName, onSubscribe } = options;
 
   const appStateRef = useRef<AppStateStatus>(
     AppState.currentState as AppStateStatus
@@ -38,47 +45,44 @@ export default function useRealtimeChannel<
     SchemaName
   >();
 
-  const channel = useMemo(
-    () => client.channel(channelName),
-    [client, channelName]
-  );
+  const channel = useMemo(() => {
+    const realtimeChannel = client.channel(channelName);
 
-  const subscribeToChannel = useEffectEvent(() => {
-    channel.subscribe((status, error) => {
-      // TODO: add external handler and retry logic???
-      if (error) {
-        Log.error('Error subscribing to realtime channel', { status, error });
-      } else {
-        Log.debug('Subscribed to realtime channel', { status });
-      }
+    realtimeChannel.subscribe((status, error) => {
+      onSubscribe?.(status, error);
     });
-  });
 
-  const unsubscribeFromChannel = useEffectEvent(() => {
-    channel.unsubscribe();
-  });
+    return realtimeChannel;
+  }, [client, channelName, onSubscribe]);
+
+  const channelRef = useRef(channel);
 
   useEffect(() => {
-    subscribeToChannel();
-
-    return () => {
-      unsubscribeFromChannel();
-    };
+    channelRef.current = channel;
   }, [channel]);
 
   useEffect(() => {
     appStateRef.current = AppState.currentState as AppStateStatus;
+
+    async function reconnectSocket() {
+      if (!channelRef.current) {
+        return;
+      }
+
+      Log.debug('Reconnecting socket', {
+        channelName: channelRef.current?.topic,
+      });
+
+      await channelRef.current?.socket.disconnect();
+      channelRef.current?.socket.connect();
+    }
 
     const subscription = AppState.addEventListener('change', (nextAppState) => {
       const previousAppState = appStateRef.current;
       appStateRef.current = nextAppState;
 
       if (previousAppState !== 'active' && nextAppState === 'active') {
-        subscribeToChannel();
-      }
-
-      if (previousAppState === 'active' && nextAppState !== 'active') {
-        unsubscribeFromChannel();
+        reconnectSocket();
       }
     });
 
