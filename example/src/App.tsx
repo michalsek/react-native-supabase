@@ -1,20 +1,22 @@
-import { Text, View, StyleSheet } from 'react-native';
-import { multiply } from 'react-native-supabase';
+import { ExpoRoot, type RequireContext } from 'expo-router';
+import { SupabaseProvider } from 'react-native-supabase';
 
-const result = multiply(3, 7);
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { Env } from './api';
+
+const context = (
+  require as unknown as { context: (path: string) => RequireContext }
+).context('./app');
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Result: {result}</Text>
-    </View>
+    <SafeAreaProvider>
+      <SupabaseProvider
+        supabaseUrl={Env.supabaseUrl}
+        supabaseKey={Env.supabaseKey}
+      >
+        <ExpoRoot context={context} />
+      </SupabaseProvider>
+    </SafeAreaProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
