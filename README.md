@@ -84,19 +84,10 @@ import type {
   REALTIME_SUBSCRIBE_STATES,
 } from '@supabase/supabase-js';
 
-interface UseRealtimeChannelOptions {
-  channelName: string;
-  onSubscribe?: (
-    status: REALTIME_SUBSCRIBE_STATES,
-    error: Error | undefined
-  ) => void;
-}
-
 function useRealtimeChannel(
   client: SupabaseClient,
-  options: UseRealtimeChannelOptions
+  channelName: string
 ): RealtimeChannel {
-  const { channelName, onSubscribe } = options;
   const appStateRef = useRef<AppStateStatus>(AppState.currentState);
 
   // Create the channel and subscribe. Recreated when the client or channel name changes.
@@ -104,7 +95,7 @@ function useRealtimeChannel(
     const ch = client.channel(channelName);
 
     ch.subscribe((status, error) => {
-      onSubscribe?.(status, error);
+      console.log('Channel subscription status', status, error);
     });
 
     return ch;
